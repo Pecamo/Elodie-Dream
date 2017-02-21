@@ -8,15 +8,16 @@
 #include "../Game/GameView.h"
 #include "../Displayable/Displayable.h"
 
-class Sky : public Displayable {
+class Sky : public Displayable
+{
 public:
-    Sky(GameView* gameView, LevelEnv env, int tilesNumber, sf::Vector2f* cameraPos, float slow);
+    Sky(GameView& gameView, LevelEnv env, int tilesNumber, sf::Vector2f& cameraPosArg, float slow);
     void display();
     virtual ~Sky();
 private:
     sf::Sprite sky;
     sf::Texture skyTexture;
-    sf::Vector2f* cameraPos;
+    sf::Vector2f& cameraPos;
     float slow;
 };
 

@@ -1,114 +1,259 @@
 #include "ScoreManager.h"
 
-// Initialisation of the singleton to NULL
-ScoreManager* ScoreManager::managerInstance = NULL;
+const int ScoreManager::BONUS_NODAMAGES = 500;
 
-ScoreManager::ScoreManager() {
-
+ScoreManager::ScoreManager() : statsManager(StatsManager::getInstance())
+{
 }
 
-ScoreManager::~ScoreManager() {
+ScoreManager::~ScoreManager()
+{
 }
 
 // Gets the instance of the entityManger
-ScoreManager* ScoreManager::getInstance() {
-    if(!managerInstance) managerInstance = new ScoreManager();
-    return managerInstance;
+ScoreManager& ScoreManager::getInstance()
+{
+    static ScoreManager instance;
+    return instance;
 }
 
-void ScoreManager::kill() {
-    if(managerInstance) {
-        delete managerInstance;
-        managerInstance = NULL;
+void ScoreManager::init(const std::vector<int>& levelsPerSubworld) {
+    this->levelsPerSubworld = levelsPerSubworld;
+
+    for (size_t i = 0; i < levelsPerSubworld.size(); ++i)
+    {
+        std::vector<Score> subWorld;
+        for (int j = 0; j < levelsPerSubworld[i]; ++j)
+        {
+            Score score;
+            subWorld.push_back(score);
+        }
+        gameScore.push_back(subWorld);
     }
 }
 
-void ScoreManager::loadScore(int level, int score, int bonus) {
-    gameScore[level].bonus = bonus;
-    gameScore[level].score = score;
+int ScoreManager::getKillPoints()
+{
+    return killPoints;
 }
 
-void ScoreManager::loadScore(std::vector< int > scores, std::vector< int > bonuses) {
-    for (unsigned int i = 0; i < scores.size(); ++i) {
-        gameScore[i].score = scores[i];
-    }
-    for (unsigned int i = 0; i < bonuses.size(); ++i) {
-        gameScore[i].bonus = bonuses[i];
-    }
+int ScoreManager::getLevelPoints()
+{
+    return killPoints + currentScore.getBoni() * Bonus::POINTS - currentScore.getDamagesTaken();
 }
 
-Score ScoreManager::getScore(int level) {
-    return gameScore[level];
+std::string ScoreManager::getScoreString()
+{
+    return scoreString;
 }
 
-Score ScoreManager::getLastSavedScore() {
-    return lastSavedScore;
+const std::vector<int>& ScoreManager::getLevelsPerSubworld()
+{
+    return levelsPerSubworld;
 }
 
-Score ScoreManager::getCurrentScore() {
+Score& ScoreManager::getScore(const std::vector<int>& level)
+{
+    return gameScore[level[0]][level[1]];
+}
+
+Score& ScoreManager::getCurrentScore()
+{
     return currentScore;
 }
 
-void ScoreManager::takeBonus() {
-    currentScore.bonus += 1;
-}
+std::vector< std::map<std::string, int> > ScoreManager::getVectMapDatas()
+{
+    std::vector< std::map<std::string, int> > datas;
 
-void ScoreManager::addScore(int score) {
-    currentScore.score += score;
-}
-
-void ScoreManager::addDamage(int damage) {
-    currentScore.damage += damage;
-}
-
-void ScoreManager::addEnemyKilled() {
-    currentScore.enemiesKilled += 1;
-}
-
-void ScoreManager::addKilledSheep() {
-    currentScore.sheeps += 1;
-}
-
-void ScoreManager::addKilledMagmacube() {
-    currentScore.magmacubes += 1;
-}
-
-void ScoreManager::addKilledBristle() {
-    currentScore.bristles += 1;
-}
-
-void ScoreManager::saveScore(int level) {
-    lastSavedScore = currentScore;
-    if (gameScore[level].score < currentScore.score) {
-        gameScore[level].score = currentScore.score;
+    for (size_t i = 0; i < levelsPerSubworld.size(); ++i)
+    {
+        for (int j = 0; j < levelsPerSubworld[i]; ++j)
+        {
+            datas.push_back(gameScore[i][j].getDatas());
+        }
     }
-    if (gameScore[level].bonus < currentScore.bonus) {
-        gameScore[level].bonus = currentScore.bonus;
-    }
-    if (gameScore[level].damage < currentScore.damage) {
-        gameScore[level].damage = currentScore.damage;
-    }
-    if (gameScore[level].enemiesKilled < currentScore.enemiesKilled) {
-        gameScore[level].enemiesKilled = currentScore.enemiesKilled;
-    }
-    if (gameScore[level].sheeps < currentScore.sheeps) {
-        gameScore[level].sheeps = currentScore.sheeps;
-    }
-    if (gameScore[level].magmacubes < currentScore.magmacubes) {
-        gameScore[level].magmacubes = currentScore.magmacubes;
-    }
-    if (gameScore[level].bristles < currentScore.bristles) {
-        gameScore[level].bristles = currentScore.bristles;
-    }
-    resetCurrentScore();
+
+    return datas;
 }
 
-void ScoreManager::resetCurrentScore() {
-    currentScore.score = 0;
-    currentScore.bonus = 0;
-    currentScore.damage = 0;
-    currentScore.enemiesKilled = 0;
-    currentScore.sheeps = 0;
-    currentScore.magmacubes = 0;
-    currentScore.bristles = 0;
+std::vector< std::vector <std::map<std::string, int> > > ScoreManager::get2DVectMapDatas()
+{
+    std::vector< std::vector <std::map<std::string, int> > > datas;
+
+    for (size_t i = 0; i < levelsPerSubworld.size(); ++i)
+    {
+        std::vector< std::map <std::string, int> > subworldScores;
+        for (int j = 0; j < levelsPerSubworld[i]; ++j)
+        {
+            subworldScores.push_back(gameScore[i][j].getDatas());
+        }
+        datas.push_back(subworldScores);
+    }
+
+    return datas;
+}
+
+std::vector<std::string> ScoreManager::getAllKeys()
+{
+    std::vector<std::string> keys;
+    keys.push_back(Score::TOTALPOINTS_KEY);
+    keys.push_back(Score::BONI_KEY);
+    keys.push_back(Score::DAMAGESTAKEN_KEY);
+    keys.push_back(Score::ENEMIESKILLED_KEY);
+    keys.push_back(Score::LARGESTKILLINGSPREE_KEY);
+    keys.push_back(Score::SHEEPS_KEY);
+    keys.push_back(Score::MAGMACUBES_KEY);
+    keys.push_back(Score::BRISTLES_KEY);
+    keys.push_back(Score::RAVENS_KEY);
+    keys.push_back(Score::METEORITES_KEY);
+    keys.push_back(Score::ALIENS_KEY);
+    return keys;
+}
+
+const std::vector< std::vector<Score> >& ScoreManager::getGameScore() {
+    return gameScore;
+}
+
+void ScoreManager::setRegisteredScoresTo(const std::vector<int>& LDL) {
+    int lastSubworld = LDL[0];
+    int lastDiscoveredLevel = LDL[1];
+    for (int i = 0; i <= lastSubworld; ++i)
+    {
+        int nLevels = levelsPerSubworld[i];
+        for (int j = 0; j < nLevels; ++j)
+        {
+            if (i != lastSubworld || (i == lastSubworld && j < lastDiscoveredLevel))
+            {
+                gameScore[i][j].setRegistered(true);
+            }
+        }
+    }
+}
+
+void ScoreManager::setVectMapDatas(const std::vector< std::map<std::string, int> >& datas)
+{
+    int nWorldsBefore = 0;
+    for (size_t i = 0; i < levelsPerSubworld.size(); ++i)
+    {
+        for (int j = 0; j < levelsPerSubworld[i]; ++j)
+        {
+            (gameScore[i][j]).setDatas(datas[nWorldsBefore]);
+            ++nWorldsBefore;
+        }
+    }
+}
+
+void ScoreManager::setLevel(const std::vector<int>& level)
+{
+    currentScore.setLevelId(level);
+}
+
+void ScoreManager::takeBonus()
+{
+    currentScore.setBoni(currentScore.getBoni() + 1);
+    statsManager.setTotalBoni(statsManager.getTotalBoni() + 1);
+}
+
+void ScoreManager::takeDamage(int damage)
+{
+    currentScore.setDamagesTaken(currentScore.getDamagesTaken() + damage);
+    if (damage > 0)
+    {
+        nKillsInARow = 0;
+    }
+    statsManager.setTotalDamages(statsManager.getTotalDamages() + damage);
+}
+
+void ScoreManager::addEnemyKilled(EnemyType type)
+{
+    ++nKillsInARow;
+    if (nKillsInARow > currentScore.getLargestKillingSpree())
+    {
+        currentScore.setLargestKillingSpree(nKillsInARow);
+    }
+    currentScore.setEnemiesKilled(currentScore.getEnemiesKilled() + 1);
+
+    switch (type)
+    {
+    case EnemyType::SHEEP:
+        killPoints += Sheep::DAMAGE * nKillsInARow;
+        currentScore.setSheeps(currentScore.getSheeps() + 1);
+        statsManager.setTotalSheeps(statsManager.getTotalSheeps() + 1);
+        break;
+    case EnemyType::MAGMACUBE:
+        killPoints += MagmaCube::DAMAGE * nKillsInARow;
+        currentScore.setMagmaCubes(currentScore.getMagmaCubes() + 1);
+        statsManager.setTotalMagmaCubes(statsManager.getTotalMagmaCubes() + 1);
+        break;
+    case EnemyType::BRISTLE:
+        killPoints += Bristle::DAMAGE * nKillsInARow;
+        currentScore.setBristles(currentScore.getBristles() + 1);
+        statsManager.setTotalBristles(statsManager.getTotalBristles() + 1);
+        break;
+    case EnemyType::RAVEN:
+        killPoints += Raven::DAMAGE * nKillsInARow;
+        currentScore.setRavens(currentScore.getRavens() + 1);
+        statsManager.setTotalRavens(statsManager.getTotalRavens() + 1);
+        break;
+    case EnemyType::ALIEN:
+        killPoints += Alien::DAMAGE * nKillsInARow;
+        currentScore.setAliens(currentScore.getAliens() + 1);
+        statsManager.setTotalAliens(statsManager.getTotalAliens() + 1);
+        break;
+    case EnemyType::METEORITE:
+        killPoints += Meteorite::DAMAGE * nKillsInARow;
+        currentScore.setMeteorites(currentScore.getMeteorites() + 1);
+        statsManager.setTotalMeteorites(statsManager.getTotalMeteorites() + 1);
+        break;
+    default:
+        break;
+    }
+}
+
+void ScoreManager::computeTotalPoints()
+{
+    int totalPoints = getLevelPoints();
+    if (currentScore.getDamagesTaken() == 0)
+    {
+        totalPoints += BONUS_NODAMAGES;
+    }
+    currentScore.setTotalPoints(totalPoints);
+}
+
+void ScoreManager::saveCurrentScore()
+{
+    std::vector<int> level = currentScore.getLevelId();
+    bool registered = (gameScore[level[0]][level[1]]).isRegistered();
+    bool betterScore = (gameScore[level[0]][level[1]]).getTotalPoints() < currentScore.getTotalPoints();
+
+    if (!registered || betterScore)
+    {
+        gameScore[level[0]][level[1]] = currentScore;
+        (gameScore[level[0]][level[1]]).setRegistered(true);
+        scoreString = "(new record! :3)";
+    }
+    else
+    {
+        scoreString = "(best score: " + Utils::itos((gameScore[level[0]][level[1]]).getTotalPoints()) + ")";
+    }
+}
+
+void ScoreManager::resetCurrentScore()
+{
+    killPoints = 0;
+    nKillsInARow = 0;
+    scoreString = "";
+    currentScore.reset();
+}
+
+void ScoreManager::resetAllScores()
+{
+    for (size_t i = 0; i < levelsPerSubworld.size(); ++i)
+    {
+        for (int j = 0; j < levelsPerSubworld[i]; ++j)
+        {
+            gameScore[i][j].reset();
+        }
+    }
 }

@@ -7,9 +7,10 @@
 #include "../Game/GameView.h"
 #include "../Displayable/Displayable.h"
 
-class Girly: public Displayable {
+class Girly: public Displayable
+{
 public:
-    Girly(GameView* view);
+    Girly(GameView& view);
     virtual ~Girly();
 
     void display();

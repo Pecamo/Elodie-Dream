@@ -2,23 +2,30 @@
 #define DEATH_H
 
 #include "../Displayable/Displayable.h"
-#include "../Game/Game.h"
 #include "../Game/GameView.h"
 #include "../const.h"
 #include "../font.h"
 
 #include <SFML/Audio.hpp>
 
-class Death : public Displayable {
+class Death : public Displayable
+{
 public:
-    Death(GameView* view, bool isMute);
+    static const int CHAR_SIZE;
+    static const float INTERSPACE;
+    static const std::string MUSIC;
+    static const std::string DREAMOVER;
+
+public:
+    Death(GameView& view, bool isMute);
     virtual ~Death();
 
     void display();
+    sf::Music& getMusic();
 
 private:
     sf::RectangleShape rect;
-    sf::Text* wokeUp;
+    sf::Text wokeUp;
     sf::Texture texture;
     sf::Sprite elo;
     sf::Music music;

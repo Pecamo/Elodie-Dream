@@ -12,11 +12,12 @@
 #include "../Include/EntityInfo.h"
 
 
-class EntitySprite : public CharacterSprite {
+class EntitySprite : public CharacterSprite
+{
 public:
     EntitySprite(EntityInfo *informations, std::string path, std::string stance);
     virtual ~EntitySprite();
-    void changeStance(std::string stance, sf::Time speed);
+    void changeStance(const std::string& stance, const sf::Time& speed);
 protected:
 private:
     std::map< std::string, Animation > animations;

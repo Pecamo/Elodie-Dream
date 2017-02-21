@@ -5,33 +5,42 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include "rapidjson/document.h"		// rapidjson's DOM-style API
+#include "rapidjson/prettywriter.h"	// for stringify JSON
+#include "rapidjson/filestream.h"	// wrapper of C stream for prettywriter as output<w>
+#include "rapidjson/stringbuffer.h"
 
-#include "../Json/JsonParser.h"
 #include "../Utils/Utils.h"
 #include "../Include/EntityInfo.h"
+#include "FileHandler.h"
 
-using std::string;
-
-class JsonAccessor {
+class JsonAccessor
+{
 public:
     JsonAccessor();
-    virtual ~JsonAccessor();
-    string getString(string key);
-    int getInt(string key);
-    std::vector<int>* getIntVector(string key);
-    std::vector< std::vector<int>* >* getInt2DVector(string key);
+    ~JsonAccessor();
+    std::string getString(const std::string& key);
+    int getInt(const std::string& key);
+    double getDouble(const std::string& key);
+    std::vector<int> getIntVector(const std::string& key);
+    std::vector< std::vector<int> > getInt2DVector(const std::string& key);
+    std::map<std::string, int> getMap(const std::string& key, const std::vector<std::string>& keys);
+    std::vector< std::map<std::string, int> > getVectMaps(const std::string& key, const std::vector<std::string>& keys);
     EntityInfo* getEntityInfo();
-    bool load(string file);
-    bool canTakeElementFrom(std::string key);
-    bool close();
-    bool createJsonIfNotExisting(std::string file);
+
+    std::string getStringWithDefault(const std::string& key, const std::string& defaultValue);
+    int getIntWithDefault(const std::string& key, int defaultValue);
+
+    bool loadJsonFrom(const std::string& pathToFile);
+    bool setJson(const std::string& json);
+    bool canTakeElementFrom(const std::string& key);
+    std::string getCurrentJson();
+    void reset();
 
 private:
-    rapidjson::Document values;
-    rapidjson::Value& getAskedObject(string key);
-    FILE * pFile;
+    rapidjson::Document doc;
     std::string pathToFile;
-    bool loaded = false;
+    char* buffer = NULL;
 };
 
 #endif // JSONACCESSOR_H

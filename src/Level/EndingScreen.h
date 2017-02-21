@@ -8,18 +8,21 @@
 
 #include <SFML/Audio.hpp>
 
-class EndingScreen : public Displayable {
+class EndingScreen : public Displayable
+{
 public:
-    EndingScreen(GameView* view, bool isMute);
+    EndingScreen(GameView& view, bool isMute, std::string image);
     virtual ~EndingScreen();
 
     void display();
+    sf::Music& getMusic();
+    void playMusic();
 
 private:
     sf::Texture texture;
     sf::Sprite endingImage;
     sf::Music music;
-
+    bool muted = false;
 };
 
 #endif // DEATH_H

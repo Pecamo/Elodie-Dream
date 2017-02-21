@@ -8,15 +8,16 @@
 #include "../Game/GameView.h"
 #include "../Displayable/Displayable.h"
 
-class Earth : public Displayable {
+class Earth : public Displayable
+{
 public:
-    Earth(GameView* gameView, LevelEnv env, int tilesNumber, sf::Vector2f* cameraPos, float slow);
+    Earth(GameView& gameView, LevelEnv env, int tilesNumber, sf::Vector2f& cameraPosArg, float slow);
     void display();
     virtual ~Earth();
 private:
     sf::Sprite earth;
     sf::Texture earthTexture;
-    sf::Vector2f* cameraPos;
+    sf::Vector2f& cameraPos;
     float slow;
 };
 

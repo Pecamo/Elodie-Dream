@@ -1,6 +1,10 @@
 # Exe
 *.exe
 
+#Linux executables
+Elodie-debug
+Elodie-release
+
 # Compiled Object files
 obj/*
 *.slo
@@ -22,6 +26,9 @@ obj/*
 *.layout
 *.db
 *.cscope_file_list
+*.blend1
+*.blend2
+screenshots/*
 
 # Game
 save

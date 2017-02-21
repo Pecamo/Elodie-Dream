@@ -6,35 +6,36 @@
 #include "../const.h"
 #include "../Include/EntityInfo.h"
 #include "SFML/Graphics.hpp"
-#include "../Json/JsonParser.h"
 #include "../Json/JsonAccessor.h"
 
-enum class EntityName {
-    ELODIE, SHEEP, MAGMACUBE, BRISTLE, GHOST, SPIKES, PORTAL, PORO, SPRITE
+enum class EntityName
+{
+    ELODIE, SHEEP, MAGMACUBE, BRISTLE, GHOST, SPIKES, PORTAL, PORO, SPRITE, METEORITE, LASER, ALIEN, RAVEN, ROCKET
 };
 
-enum class EntityType {
+enum class EntityType
+{
     ELODIE, ENEMY, MISC, BONUS
 };
 
 typedef std::map< EntityType, std::map< EntityName, EntityInfo* > > EntityBox;
 
-class EntityManager {
+class EntityManager
+{
 public:
-    static EntityManager* getInstance();
-    static void kill();
+    static EntityManager& getInstance();
     EntityInfo* getEnemyInfo(EntityType type, EntityName name);
-protected:
+
 private:
     EntityManager();
     virtual ~EntityManager();
 
-    static EntityManager* managerInstance;
+    EntityManager(const EntityManager&);
     EntityManager& operator= (EntityManager const&); // Makes operator= private
 
     std::string getPath(EntityType type, EntityName name);
 
-     EntityBox enemies;
+    EntityBox enemies;
 
     std::map< EntityName, std::string > ENTITY_NAME;
     std::map< EntityType, std::string > ENTITY_TYPE;

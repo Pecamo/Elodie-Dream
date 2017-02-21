@@ -1,0 +1,9 @@
+{
+	"gravity" : 3000,
+	"jumpSpeed" : -430,
+	"moveSpeed" : 635,
+	"zoom" : 2.0,
+	"interRecoveryTime" : 1000.0,
+	"attackCD" : 0.5,
+	"music" : "level2.ogg"
+}

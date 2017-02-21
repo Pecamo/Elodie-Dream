@@ -1,7 +1,6 @@
 #ifndef PORO_H_INCLUDED
 #define PORO_H_INCLUDED
 
-#include "../const.h"
 #include "Entity.h"
 #include "../Sprite/EntitySprite.h"
 #include "../Include/Collide.h"
@@ -9,40 +8,31 @@
 #include "../EventHandler/EventHandler.h"
 #include "../EntityManager/EntityManager.h"
 #include "Elodie.h"
-#include "../Sound/SoundManager.h"
 
-class SoundManager;
+class Poro : public Entity
+{
+public:
+    static const int SPEED_X;
+    static const int SPEED_Y;
+    static const int DETECTION;
+    static const std::map< int, std::string > ANIMATIONS;
 
-enum class PoroState { RUNNING };
+    enum State
+    {
+        RUNNING
+    };
 
-class Poro : public Entity {
 public:
     Poro();
     Poro(sf::Vector2f position);
     Poro(float x, float y);
     virtual ~Poro();
 
-    void update(sf::Time deltaTime);
-
-    EntitySprite* getSprite();
-    Hitbox returnCurrentHitbox();
     void checkArea(std::map< std::string, Entity* >& entities);
-    void takeDamage(int damage, bool ignore);
-    void doStuff(EventHandler* const& event, std::vector< std::vector<TileSprite*> > const& tiles, std::map< std::string, Entity* >& entities, sf::Time animate);
-    void pause();
-    void play();
-protected:
 
-private:
-    void init(float x, float y);
-    int damage = 0;
-    SoundManager* soundManager;
-
-    EntitySprite* sprite;
-
-   PoroState state;
-
-    std::map< PoroState, std::string > ANIMATIONS;
+    virtual void takeDamage(int damage, bool ignore);
+    virtual void doStuff(const EventHandler& event, const std::vector< std::vector<TileSprite*> >& tiles,
+                         std::map< std::string, Entity* >& entities, sf::Time animate);
 };
 
 #endif // PORO_H_INCLUDED

@@ -10,11 +10,13 @@
 #include "../env.h"
 #include "../Displayable/Displayable.h"
 
-enum class ViewLayer {
-    MENU, OVERWORLD, LEVEL, HUD, CONSOLE, GIRLY, IMMERSIONBAR, DEATH, SKY, EARTH, SCORE, ENDINGSCREEN, TITLESCREEN
+enum class ViewLayer
+{
+    MENU, OVERWORLD, LEVEL, HUD, CONSOLE, GIRLY, DEATH, SKY, EARTH, SCORE, STATS, ENDINGSCREEN, TITLESCREEN
 };
 
-class GameView {
+class GameView
+{
 public:
     GameView();
     virtual ~GameView();
@@ -22,7 +24,9 @@ public:
     void draw();
     void addDrawable(ViewLayer viewKey, sf::Drawable*);
 
-    sf::RenderWindow* getWindow();
+    sf::RenderWindow& getWindow();
+    float getSizeX();
+    float getSizeY();
 
     void addView(ViewLayer viewKey, Displayable* disp);
 

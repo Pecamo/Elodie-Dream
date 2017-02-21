@@ -3,27 +3,39 @@
 
 #include <fstream>
 #include <cstdio>
-#include "rapidjson/document.h"		// rapidjson's DOM-style API
-#include "rapidjson/prettywriter.h"	// for stringify JSON
-#include "rapidjson/filestream.h"	// wrapper of C stream for prettywriter as output
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/filestream.h"
 #include "../env.h"
+#include "../const.h"
+#include "../Utils/Utils.h"
 
-#include "../Json/JsonParser.h"
 #include "../Json/JsonStringifier.h"
-#include "../Json/JsonAccessor.h"
 #include "FileHandler.h"
 
-class SaveHandler {
+class SaveHandler
+{
 public:
-    static SaveHandler* getInstance();
+    static const unsigned int NUMSLOTS;
 
-    void setPath(std::string path);
-    JsonStringifier* getStringifier();
+    static const std::string VERSION_KEY;
+    static const std::string DATE_KEY;
+    static const std::string LDL_KEY;
+    static const std::string SCORES_KEY;
+    static const std::string MORESTATS_KEY;
 
-    void save();
-    std::string load();
+    static const std::string SLOT_PREFIX_LABEL;
 
+    static SaveHandler& getInstance();
+    static bool isSlotFree(const std::string& slot);
+    static std::string nextFreeSlot();
+    static std::string computeLevelName(const std::vector<int>& LDL);
+
+    JsonStringifier& getStringifier();
     void clearStringifier();
+
+    void saveEncryptedContentTo(const std::string& path);
+    std::string getDecryptedContentFrom(const std::string& path);
 
 private:
     SaveHandler();
@@ -32,12 +44,22 @@ private:
     static SaveHandler* shInstance;
     SaveHandler& operator= (SaveHandler const&); // Makes operator= private
 
-    std::string path;
-    JsonStringifier* stringifier;
-    JsonAccessor* accessor;
+    /**
+    * \brief Encrypts a string to a vector of int, using a key.
+    * \param p The string to encrypt.
+    * \param key The key used to encrypt.
+    * \return An int vector, the string encrypted.
+    */
+    std::vector<int> encrypt(const std::string& p, const std::string& key);
+    /**
+    * \brief Decrypts a string from a vector of int, using a key.
+    * \param tmp The string to decrypt.
+    * \param key The key used to decrypt.
+    * \return A string, the int vector decrypted.
+    */
+    std::string decrypt(std::vector<int> tmp, const std::string& key);
 
-    std::vector<int> encrypt(std::string p, std::string key);
-    std::string decrypt(std::vector<int> tmp, std::string key);
+    JsonStringifier stringifier;
 };
 
 #endif // SAVEHANDLER_H

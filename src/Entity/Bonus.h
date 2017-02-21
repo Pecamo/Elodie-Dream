@@ -9,40 +9,29 @@
 #include "../EventHandler/EventHandler.h"
 #include "../EntityManager/EntityManager.h"
 #include "Elodie.h"
-#include "../Sound/SoundManager.h"
 
-class SoundManager;
+class Bonus : public Entity
+{
+public:
+    static const int POINTS;
+    static const std::map< int, std::string > ANIMATIONS;
 
-enum class BonusState { STANDING };
+    enum State
+    {
+        STANDING
+    };
 
-class Bonus : public Entity {
 public:
     Bonus();
     Bonus(sf::Vector2f position);
     Bonus(float x, float y);
     virtual ~Bonus();
 
-    void update(sf::Time deltaTime);
-
-    EntitySprite* getSprite();
-    Hitbox returnCurrentHitbox();
     void getTaken(std::map< std::string, Entity* >& entities);
-    void takeDamage(int damage, bool ignore);
-    void doStuff(EventHandler* const& event, std::vector< std::vector<TileSprite*> > const& tiles, std::map< std::string, Entity* >& entities, sf::Time animate);
-    void pause();
-    void play();
-protected:
 
-private:
-    void init(float x, float y);
-    int damage = 0;
-    SoundManager* soundManager;
-
-    EntitySprite* sprite;
-
-    BonusState state;
-
-    std::map< BonusState, std::string > ANIMATIONS;
+    virtual void takeDamage(int damage, bool ignore);
+    virtual void doStuff(const EventHandler& event, const std::vector< std::vector<TileSprite*> >& tiles,
+                         std::map< std::string, Entity* >& entities, sf::Time animate);
 };
 
 #endif // BONUS_H_INCLUDED

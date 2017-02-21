@@ -13,11 +13,15 @@
 * The class used to display infos to the player in game. Shows as a black layer with some transparency
 * and white text.
 */
-class Console: public Displayable {
+class Console: public Displayable
+{
 public:
-    Console(GameView* view);
+    static const int NLINES;
+
+    Console(GameView& view);
     virtual ~Console();
 
+    void clearAndWrite(std::string m);
     void addParagraph(std::string paragraph);
 
     // Cuts a string in multiple strings if the string's text is longer than maxWidth

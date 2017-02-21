@@ -1,83 +1,130 @@
 #include "SaveHandler.h"
 
-// Initialisation of the singleton to NULL
-SaveHandler* SaveHandler::shInstance = NULL;
+const unsigned int SaveHandler::NUMSLOTS = 5;
 
-SaveHandler::SaveHandler() {
-    stringifier = new JsonStringifier();
-    accessor = new JsonAccessor();
+const std::string SaveHandler::VERSION_KEY = "version";
+const std::string SaveHandler::DATE_KEY = "date";
+const std::string SaveHandler::LDL_KEY = "lastdiscoveredlevel";
+const std::string SaveHandler::SCORES_KEY = "scoresdatas";
+const std::string SaveHandler::MORESTATS_KEY = "morestats";
+
+const std::string SaveHandler::SLOT_PREFIX_LABEL = "Slot ";
+
+SaveHandler::SaveHandler()
+{
+
 }
 
-SaveHandler::~SaveHandler() {
-    delete stringifier;
-    delete accessor;
-    stringifier = NULL;
-    accessor = NULL;
+SaveHandler::~SaveHandler()
+{
+
 }
 
-// Gets the instance of the game
-SaveHandler* SaveHandler::getInstance() {
-    if(!shInstance) shInstance = new SaveHandler();
-    return shInstance;
+// Gets the instance of the SaveHandler
+SaveHandler& SaveHandler::getInstance()
+{
+    static SaveHandler instance;
+    return instance;
 }
 
-void SaveHandler::setPath(std::string path) {
-    this->path = path;
+bool SaveHandler::isSlotFree(const std::string& slot)
+{
+    return !FileHandler::fileExists("save/" + slot + ".save");
 }
 
-JsonStringifier* SaveHandler::getStringifier() {
+std::string SaveHandler::nextFreeSlot()
+{
+    for (unsigned int i = 1; i <= NUMSLOTS; i++)
+    {
+        std::string slot = SLOT_PREFIX_LABEL + Utils::itos(i);
+        if (isSlotFree(slot))
+        {
+            return slot;
+        }
+    }
+    return "";
+}
+
+std::string SaveHandler::computeLevelName(const std::vector<int>& levelNumber)
+{
+    int firstSubworld = 0;
+    std::vector<int> tuto = {0,0};
+    if (levelNumber == tuto)
+    {
+        return "Tutorial";
+    }
+    else if (levelNumber[0] == firstSubworld)
+    {
+        return "Level " + Utils::itos(levelNumber[0] + 1) + "-" + Utils::itos(levelNumber[1]);
+    }
+    else {
+         return "Level " + Utils::itos(levelNumber[0] + 1) + "-" + Utils::itos(levelNumber[1] + 1);
+    }
+}
+
+JsonStringifier& SaveHandler::getStringifier()
+{
     return stringifier;
 }
 
-void SaveHandler::save() {
-    std::string stringified(stringifier->getStringifiedDoc());
+void SaveHandler::clearStringifier()
+{
+    stringifier.reset();
+}
 
-    // saves the encrypted stringified json to the file
+void SaveHandler::saveEncryptedContentTo(const std::string& path)
+{
+    std::string stringified = stringifier.getStringifiedDoc();
+
+    // saves the encrypted content to the file
     std::vector<int> tmp = encrypt(stringified, "key");
     std::ofstream myfile;
     myfile.open(path);
-    for (size_t i = 0; i < tmp.size(); ++i) {
+    for (size_t i = 0; i < tmp.size(); ++i)
+    {
         myfile << tmp[i] << std::endl;
     }
     myfile.close();
 }
 
-std::string SaveHandler::load() {
-    // loads the file, decrypts the json inside
+std::string SaveHandler::getDecryptedContentFrom(const std::string& path)
+{
+    // loads the file, decrypts the content
     std::vector<int> tmp;
     std::ifstream infile;
     infile.open(path);
     int acc;
-    while(infile>>acc) {
+    while (infile >> acc)
+    {
         tmp.push_back(acc);
     }
     infile.close();
     std::string json = decrypt(tmp, "key");
 
     // in case the file is not here -> no parse error
-    if(json == "") {
+    if (json == "")
+    {
         json = "{}";
     }
 
     return json;
 }
 
-void SaveHandler::clearStringifier() {
-    delete stringifier;
-    stringifier = new JsonStringifier();
-}
-
-std::vector<int> SaveHandler::encrypt(std::string p, std::string key) {
+std::vector<int> SaveHandler::encrypt(const std::string& p, const std::string& key)
+{
     std::vector<int> tmp;
-    for(size_t i = 0; i < p.length(); ++i) {
+    for (size_t i = 0; i < p.length(); ++i)
+    {
         tmp.push_back((int)p[i]^key[i%key.length()]);
     }
     return tmp;
 }
 
-std::string SaveHandler::decrypt(std::vector<int> tmp, std::string key) {
+std::string SaveHandler::decrypt(std::vector<int> tmp, const std::string& key)
+{
     std::string p = "";
-    for(size_t i = 0; i < tmp.size(); ++i) {
+    for (size_t i = 0; i < tmp.size(); ++i)
+    {
         p += ((char)tmp[i])^key[i%key.length()];
     }
     return p;

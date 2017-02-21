@@ -1,15 +1,14 @@
 #include "Displayable.h"
 
-
-Displayable::Displayable(GameView* gameView) {
-    this->view = new sf::View();
-    this->gameView = gameView;
+Displayable::Displayable(GameView& g) : gameView(g)
+{
 }
 
-Displayable::~Displayable() {
-    delete view;
+Displayable::~Displayable()
+{
 }
 
-sf::View* Displayable::getView() {
-    return this->view;
+sf::View& Displayable::getView()
+{
+    return (this->view);
 }

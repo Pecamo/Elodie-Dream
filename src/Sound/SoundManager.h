@@ -9,10 +9,10 @@
 #include "../const.h"
 #include "../Game/Game.h"
 
-class SoundManager {
+class SoundManager
+{
 public:
-    static SoundManager* getInstance();
-    static void kill();
+    static SoundManager& getInstance();
 
     sf::SoundBuffer* getRandomSoundBuffer(SoundType type);
     std::string getPath(SoundType type, int n);
@@ -26,7 +26,7 @@ private:
     SoundManager();
     ~SoundManager();
 
-    static SoundManager* soundManagerInstance;
+    SoundManager(const SoundManager&);
     SoundManager& operator= (SoundManager const&);
 
     std::map< SoundType, std::map< int, sf::SoundBuffer* > > soundBuffers;

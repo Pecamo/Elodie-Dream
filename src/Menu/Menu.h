@@ -8,32 +8,36 @@
 #include "../Game/GameView.h"
 #include "../Utils/Utils.h"
 #include "MenuComponent.h"
-#include "MenuItem.h"
-#include "SaveItem.h"
-#include "LoadItem.h"
 
-class Menu : public MenuComponent {
+class Menu : public MenuComponent
+{
 
 public:
-    Menu(std::string label);
+    static const std::string SELECTOR_PATH;
+
+    Menu(const std::string& label, GameState state);
     virtual ~Menu();
 
     void addItem(MenuComponent* item, bool isParent = false);
-    void draw(GameView* view, bool inLevel);
-    void incIndex(bool inLevel);
-    void decIndex(bool inLevel);
+    void draw(GameView& view);
+    void incIndex();
+    void decIndex();
     int getIndex();
     MenuComponent* getSelectedItem();
+    MenuComponent* getCurrentMenuComponent();
+    /**
+    * \brief Essential to prepare what's going to be displayed. Should be used after changes in the items's visibility.
+    */
+    void prepareVisibles();
 
-    std::pair<GameState, MenuComponent*> execute();
-
-private:
+protected:
     sf::Texture selectortexture;
     sf::Sprite selector;
 
     sf::RectangleShape background;
 
     std::vector<MenuComponent*> items;
+    std::vector<MenuComponent*> visibles;
 
     std::vector<bool> isParent;
 

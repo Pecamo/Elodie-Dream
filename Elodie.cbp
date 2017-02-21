@@ -13,12 +13,18 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
+					<Add option="-Wmain" />
+					<Add option="-pedantic" />
 					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
+					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-fexceptions -Werror" />
 					<Add directory="rapidjson/include" />
 					<Add directory="sfml/include" />
+					<Add directory="src/Menu" />
+					<Add directory="src/FileHandler" />
+					<Add directory="src/Stats" />
 				</Compiler>
 				<Linker>
 					<Add library="sfml\lib\libsfml-graphics-d.a" />
@@ -43,6 +49,9 @@
 					<Add option="-fexceptions -Werror" />
 					<Add directory="rapidjson/include" />
 					<Add directory="sfml/include" />
+					<Add directory="src/Menu" />
+					<Add directory="src/FileHandler" />
+					<Add directory="src/Stats" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -57,6 +66,14 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-Wmain" />
+			<Add option="-pedantic-errors" />
+			<Add option="-pedantic" />
+			<Add option="-std=c++11" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+		</Compiler>
 		<Unit filename="resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
@@ -70,12 +87,20 @@
 		<Unit filename="src/Entity/Bonus.h" />
 		<Unit filename="src/Entity/Elodie.cpp" />
 		<Unit filename="src/Entity/Elodie.h" />
+		<Unit filename="src/Entity/Enemy/Alien.cpp" />
+		<Unit filename="src/Entity/Enemy/Alien.h" />
 		<Unit filename="src/Entity/Enemy/Bristle.cpp" />
 		<Unit filename="src/Entity/Enemy/Bristle.h" />
 		<Unit filename="src/Entity/Enemy/Ghost.cpp" />
 		<Unit filename="src/Entity/Enemy/Ghost.h" />
+		<Unit filename="src/Entity/Enemy/Laser.cpp" />
+		<Unit filename="src/Entity/Enemy/Laser.h" />
 		<Unit filename="src/Entity/Enemy/MagmaCube.cpp" />
 		<Unit filename="src/Entity/Enemy/MagmaCube.h" />
+		<Unit filename="src/Entity/Enemy/Meteorite.cpp" />
+		<Unit filename="src/Entity/Enemy/Meteorite.h" />
+		<Unit filename="src/Entity/Enemy/Raven.cpp" />
+		<Unit filename="src/Entity/Enemy/Raven.h" />
 		<Unit filename="src/Entity/Enemy/Sheep.cpp" />
 		<Unit filename="src/Entity/Enemy/Sheep.h" />
 		<Unit filename="src/Entity/Enemy/Spikes.cpp" />
@@ -90,6 +115,8 @@
 		<Unit filename="src/Entity/Portal.h" />
 		<Unit filename="src/EventHandler/EventHandler.cpp" />
 		<Unit filename="src/EventHandler/EventHandler.h" />
+		<Unit filename="src/FileHandler/ConfigManager.cpp" />
+		<Unit filename="src/FileHandler/ConfigManager.h" />
 		<Unit filename="src/FileHandler/FileHandler.cpp" />
 		<Unit filename="src/FileHandler/FileHandler.h" />
 		<Unit filename="src/FileHandler/SaveHandler.cpp" />
@@ -107,53 +134,36 @@
 		<Unit filename="src/Item/Item.h" />
 		<Unit filename="src/Json/JsonAccessor.cpp" />
 		<Unit filename="src/Json/JsonAccessor.h" />
-		<Unit filename="src/Json/JsonParser.cpp" />
-		<Unit filename="src/Json/JsonParser.h" />
 		<Unit filename="src/Json/JsonStringifier.cpp" />
 		<Unit filename="src/Json/JsonStringifier.h" />
-		<Unit filename="src/LanguageHandler/LanguageHandler.cpp" />
-		<Unit filename="src/LanguageHandler/LanguageHandler.h" />
 		<Unit filename="src/Level/Death.cpp" />
 		<Unit filename="src/Level/Death.h" />
 		<Unit filename="src/Level/EndingScreen.cpp" />
 		<Unit filename="src/Level/EndingScreen.h" />
-		<Unit filename="src/Level/Immersionbar.cpp" />
-		<Unit filename="src/Level/Immersionbar.h" />
+		<Unit filename="src/Level/Hud.cpp" />
+		<Unit filename="src/Level/Hud.h" />
 		<Unit filename="src/Level/Level.cpp" />
 		<Unit filename="src/Level/Level.h" />
 		<Unit filename="src/Map/Mapper.cpp" />
 		<Unit filename="src/Map/Mapper.h" />
-		<Unit filename="src/Menu/BackOverWorldItem.cpp" />
-		<Unit filename="src/Menu/BackOverWorldItem.h" />
-		<Unit filename="src/Menu/EnglishItem.cpp" />
-		<Unit filename="src/Menu/EnglishItem.h" />
-		<Unit filename="src/Menu/LoadItem.cpp" />
-		<Unit filename="src/Menu/LoadItem.h" />
 		<Unit filename="src/Menu/Menu.cpp" />
 		<Unit filename="src/Menu/Menu.h" />
 		<Unit filename="src/Menu/MenuComponent.cpp" />
 		<Unit filename="src/Menu/MenuComponent.h" />
 		<Unit filename="src/Menu/MenuHandler.cpp" />
 		<Unit filename="src/Menu/MenuHandler.h" />
-		<Unit filename="src/Menu/MenuItem.cpp" />
-		<Unit filename="src/Menu/MenuItem.h" />
-		<Unit filename="src/Menu/NewGameItem.cpp" />
-		<Unit filename="src/Menu/NewGameItem.h" />
-		<Unit filename="src/Menu/QuitItem.cpp" />
-		<Unit filename="src/Menu/QuitItem.h" />
-		<Unit filename="src/Menu/ResumeItem.cpp" />
-		<Unit filename="src/Menu/ResumeItem.h" />
-		<Unit filename="src/Menu/SaveItem.cpp" />
-		<Unit filename="src/Menu/SaveItem.h" />
+		<Unit filename="src/Menu/TitleMenu.cpp" />
+		<Unit filename="src/Menu/TitleMenu.h" />
 		<Unit filename="src/Menu/TitleScreen.cpp" />
 		<Unit filename="src/Menu/TitleScreen.h" />
 		<Unit filename="src/Overworld/Overworld.cpp" />
 		<Unit filename="src/Overworld/Overworld.h" />
+		<Unit filename="src/Score/Score.cpp" />
 		<Unit filename="src/Score/Score.h" />
+		<Unit filename="src/Score/ScoreBoard.cpp" />
+		<Unit filename="src/Score/ScoreBoard.h" />
 		<Unit filename="src/Score/ScoreManager.cpp" />
 		<Unit filename="src/Score/ScoreManager.h" />
-		<Unit filename="src/Score/Scoreboard.cpp" />
-		<Unit filename="src/Score/Scoreboard.h" />
 		<Unit filename="src/Sky/Earth.cpp" />
 		<Unit filename="src/Sky/Earth.h" />
 		<Unit filename="src/Sky/Sky.cpp" />
@@ -176,8 +186,14 @@
 		<Unit filename="src/Sprite/Interactive.h" />
 		<Unit filename="src/Sprite/TileSprite.cpp" />
 		<Unit filename="src/Sprite/TileSprite.h" />
+		<Unit filename="src/Stats/StatsBoard.cpp" />
+		<Unit filename="src/Stats/StatsBoard.h" />
+		<Unit filename="src/Stats/StatsManager.cpp" />
+		<Unit filename="src/Stats/StatsManager.h" />
 		<Unit filename="src/TextureManager/TextureManager.cpp" />
 		<Unit filename="src/TextureManager/TextureManager.h" />
+		<Unit filename="src/Utils/Date.cpp" />
+		<Unit filename="src/Utils/Date.h" />
 		<Unit filename="src/Utils/Utils.cpp" />
 		<Unit filename="src/Utils/Utils.h" />
 		<Unit filename="src/const.h" />

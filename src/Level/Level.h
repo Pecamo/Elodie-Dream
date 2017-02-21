@@ -18,13 +18,14 @@
 class Game;
 class Elodie;
 
-class Level : public Displayable {
+class Level : public Displayable
+{
 public:
-    Level(GameView* gameView, std::string filename, LevelEnv env, Elodie* elodie);
+    Level(GameView& gameView, std::vector<int> levelNbr, LevelEnv env, Elodie& elodie);
     virtual ~Level();
 
-    void loadLevel(std::string filename, Elodie* elodie);
-    void live(EventHandler* const& event, sf::Time animate);
+    void loadLevel(std::string filename, Elodie& elodie);
+    void live(const EventHandler& event, sf::Time animate);
 
     TileMap getTiles();
     EntityMap getEntities();
@@ -34,21 +35,26 @@ public:
     void applyEnv(TileMap tiles);
 
     void pause();
-    void play(sf::Clock *frameClock);
+    void play(sf::Clock* frameClock);
 
-    sf::Music* getMusic();
-    bool mustDie();
-    bool isFinished();
-protected:
+    sf::Music& getMusic();
+    bool isDead();
+    bool isCleared();
+    bool mustLeave();
+    EndingScreen* getEndingScreen();
+
 private:
     std::pair <float,float> getSlowVariables(LevelEnv env);
     TileMap tiles;
     EntityMap entities;
     LevelEnv environement;
-    TextureManager* manager;
+    TextureManager manager;
     sf::Music music;
     Sky* sky;
     Earth* earth;
+    int HORIZONTAL_DISPLAY_MARGIN = WINDOW_WIDTH/(2*2.0) + 2*BLOCK_SIZE; //2 * 2.0 for historical reasons
+    int VERTICAL_DISPLAY_MARGIN = WINDOW_HEIGHT/(2*2.0) + 2*BLOCK_SIZE;
+    EndingScreen* endingScreen = nullptr;
 };
 
 #endif // LEVEL_H

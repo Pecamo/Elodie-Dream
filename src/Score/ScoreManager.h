@@ -6,38 +6,70 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "Score.h"
+#include "../env.h"
+#include "../Entity/Enemy/Sheep.h"
+#include "../Entity/Enemy/MagmaCube.h"
+#include "../Entity/Enemy/Bristle.h"
+#include "../Entity/Enemy/Raven.h"
+#include "../Entity/Enemy/Alien.h"
+#include "../Entity/Enemy/Meteorite.h"
+#include "../Entity/Bonus.h"
+#include "../Stats/StatsManager.h"
 
-class ScoreManager {
+class ScoreManager
+{
 public:
-    static ScoreManager* getInstance();
-    static void kill();
+    static const int BONUS_NODAMAGES;
 
-    void loadScore(int level, int score, int bonus);
-    void loadScore(std::vector< int > scores, std::vector< int > bonuses);
+    static ScoreManager& getInstance();
 
-    Score getScore(int level);
-    Score getCurrentScore();
-    Score getLastSavedScore();
+    void init(const std::vector<int>& envPerSubworld);
+
+    int getKillPoints();
+    int getLevelPoints();
+    std::string getScoreString();
+    const std::vector<int>& getLevelsPerSubworld();
+
+    Score& getScore(const std::vector<int>& level);
+    Score& getCurrentScore();
+    /**
+    * \brief Returns in a vector of map of string and int (representing a vector of all the Scores). Used to prepare datas for the save.
+    * \return A vector of vector of int containing each value of a Score, in the same order as in Score.h.
+    */
+    std::vector< std::map<std::string, int> > getVectMapDatas();
+    std::vector< std::vector <std::map<std::string, int> > > get2DVectMapDatas();
+    std::vector<std::string> getAllKeys();
+    const std::vector< std::vector<Score> >& getGameScore();
+
+    void setRegisteredScoresTo(const std::vector<int>& LDL);
+    void setVectMapDatas(const std::vector< std::map<std::string, int> >& datas);
+    void setLevel(const std::vector<int>& level);
+    void setKillPoints(int points);
+
     void takeBonus();
-    void addScore(int score);
-    void addDamage(int damage);
-    void addEnemyKilled();
-    void addKilledSheep();
-    void addKilledMagmacube();
-    void addKilledBristle();
-    void saveScore(int level);
+    void takeDamage(int damage);
+    void addEnemyKilled(EnemyType type);
+    void computeTotalPoints();
+    void saveCurrentScore();
     void resetCurrentScore();
-protected:
+    void resetAllScores();
+
 private:
     ScoreManager();
     virtual ~ScoreManager();
 
-    static ScoreManager* managerInstance;
+    ScoreManager(const ScoreManager&);
     ScoreManager& operator= (ScoreManager const&); // Makes operator= private
 
+    std::vector<int> levelsPerSubworld = {0,0};
     Score currentScore;
-    Score lastSavedScore;
-    std::map< int, Score > gameScore;
+    std::vector< std::vector<Score> > gameScore;
+
+    StatsManager& statsManager;
+
+    int killPoints = 0;
+    int nKillsInARow = 0;
+    std::string scoreString = "";
 };
 
 
